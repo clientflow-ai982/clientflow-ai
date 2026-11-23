@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClientFlow AI - Connexion</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #F4F7FA;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .login-card {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      padding: 35px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(16,42,67,.10);
+    }
+    h1 { color: #102A43; }
+    p { color: #627D98; }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      background: #087FE5;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    #message { overflow-wrap: anywhere; }
+    .logo { font-size: 42px; color: #087FE5; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="logo">✦</div>
+    <h1>ClientFlow AI</h1>
+    <p>Less Manual Work. More Happy Clients.</p>
+    <p>Bienvenue sur votre espace professionnel.</p>
+
+    <button id="loginBtn">Continuer avec Google</button>
+    <p id="message"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "REMPLACER",
+      authDomain: "REMPLACER",
+      projectId: "REMPLACER",
+      storageBucket: "REMPLACER",
+      messagingSenderId: "REMPLACER",
+      appId: "REMPLACER"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const button = document.getElementById("loginBtn");
+    const message = document.getElementById("message");
+
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      message.textContent = "Connexion en cours...";
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        message.textContent =
+          "Bienvenue " + result.user.displayName + " !";
+      } catch (error) {
+        message.textContent = "Erreur : " + error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
