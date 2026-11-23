@@ -62,7 +62,9 @@
       GoogleAuthProvider,
       signInWithPopup
     } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
+import {
+  getFirestore
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyD7GDT8LdP_1-J5wouejg0Ot52iuxxGFvo",
       authDomain: "clientflow-ai-c763e.firebaseapp.com",
@@ -74,6 +76,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
     const button = document.getElementById("loginBtn");
