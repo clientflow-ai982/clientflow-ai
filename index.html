@@ -650,7 +650,16 @@ async function loadProspects() {
       phone.textContent = "Téléphone : " + (prospect.phone || "Non renseigné");
 
       const status = document.createElement("p");
-      status.textContent = "Statut : " + (prospect.status || "Nouveau");
+      const statusLabels = {
+  new: "Nouveau",
+  contacted: "Contacté",
+  interested: "Intéressé",
+  customer: "Client",
+  lost: "Perdu"
+};
+
+status.textContent =
+  "Statut : " + (statusLabels[prospect.status] || "Nouveau");
 
       card.append(title, contact, phone, status);
       prospectsList.appendChild(card);
