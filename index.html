@@ -53,6 +53,32 @@
     <p id="message"></p>
   </div>
 
+<div id="dashboard" style="display:none; padding:25px;">
+  <h1>ClientFlow AI</h1>
+  <p>Gestion intelligente de vos demandes clients</p>
+
+  <div>
+    <h2>Tableau de bord</h2>
+    <p>Bienvenue dans votre espace professionnel.</p>
+  </div>
+
+  <div id="stats">
+    <p>Demandes totales : <span id="totalRequests">0</span></p>
+    <p>En attente : <span id="pendingRequests">0</span></p>
+    <p>Terminées : <span id="completedRequests">0</span></p>
+  </div>
+
+  <h2>Liste des demandes</h2>
+  <input
+    type="search"
+    id="searchRequests"
+    placeholder="Rechercher une demande..."
+  >
+
+  <div id="requestsList">
+    Chargement des demandes...
+  </div>
+</div>
   <script type="module">
     import { initializeApp }
       from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -65,7 +91,9 @@
 import {
   getFirestore,
   doc,
-  getDoc
+  getDoc,
+  collection,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyD7GDT8LdP_1-J5wouejg0Ot52iuxxGFvo",
@@ -98,6 +126,89 @@ const userSnap = await getDoc(userRef);
 
 if (userSnap.exists()) {
   console.log("Profil Firestore :", userSnap.data());
+  const companyId = userSnap.data().companyId;
+
+if (!companyId) {
+  message.textContent = "Erreur : entreprise introuvable.";
+  return;
+}
+
+document.querySelector(".login-card").style.display = "none";
+document.getElementById("dashboard").style.display = "block";
+  const requestsRef = collection(db, "companies", companyId, "requests");
+const requestsSnapshot = await getDocs(requestsRef);
+
+const requests = requestsSnapshot.docs.map(doc => doc.data());
+
+console.log("Demandes récupérées :", requests);
+  document.getElementById("totalRequests").textContent = requests.length;
+  const pendingCount = requests.filter(r =>
+  ["pending", "en attente", "nouvelle"].includes(
+    String(r.status || "").toLowerCase().trim()
+  )
+).length;
+
+document.getElementById("pendingRequests").textContent = pendingCount;
+  const completedCount = requests.filter(r =>
+  ["completed", "terminée", "terminee", "terminé", "termine"]
+    .includes(String(r.status || "").toLowerCase().trim())
+).length;
+
+document.getElementById("completedRequests").textContent = completedCount;
+  const requestsList = document.getElementById("requestsList");
+requestsList.textContent = "";
+
+requests.forEach((request, index) => {
+  const searchInput = document.getElementById("searchRequests");
+
+searchInput.addEventListener("input", () => {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+
+  const filteredRequests = requests.filter(r =>
+    String(r.customerName || "").toLowerCase().includes(searchTerm) ||
+    String(r.service || "").toLowerCase().includes(searchTerm)
+  );
+
+  requestsList.textContent = "";
+
+  filteredRequests.forEach(request => {
+    const item = document.createElement("div");
+    item.style.background = "white";
+    item.style.padding = "15px";
+    item.style.margin = "10px 0";
+    item.style.borderRadius = "10px";
+
+    const name = document.createElement("h3");
+    name.textContent = request.customerName || "Client sans nom";
+
+    const service = document.createElement("p");
+    service.textContent = "Service : " + (request.service || "Non précisé");
+
+    const status = document.createElement("p");
+    status.textContent = "Statut : " + (request.status || "Non précisé");
+
+    item.append(name, service, status);
+    requestsList.appendChild(item);
+  });
+});
+  const item = document.createElement("div");
+  item.style.background = "white";
+  item.style.padding = "15px";
+  item.style.margin = "10px 0";
+  item.style.borderRadius = "10px";
+
+  const name = document.createElement("h3");
+  name.textContent = request.customerName || "Client sans nom";
+
+  const service = document.createElement("p");
+  service.textContent = "Service : " + (request.service || "Non précisé");
+
+  const status = document.createElement("p");
+  status.textContent = "Statut : " + (request.status || "Non précisé");
+
+  item.append(name, service, status);
+  requestsList.appendChild(item);
+});
   message.textContent += " — Profil Firestore connecté !";
 } else {
   console.log("Profil utilisateur introuvable dans Firestore.");
