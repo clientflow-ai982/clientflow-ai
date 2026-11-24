@@ -345,6 +345,25 @@ if (dateValue) {
 
 date.textContent = "Date de réception : " + formattedDate;
     const status = document.createElement("p");
+    const aiPriority = document.createElement("p");
+
+const suggestedPriority = request.aiSuggestedPriority || "Non analysée";
+
+aiPriority.textContent = "Priorité suggérée : " + suggestedPriority;
+
+aiPriority.style.display = "inline-block";
+aiPriority.style.padding = "7px 12px";
+aiPriority.style.borderRadius = "20px";
+aiPriority.style.fontWeight = "bold";
+aiPriority.style.background =
+  suggestedPriority === "urgente" ? "#fee2e2" :
+  suggestedPriority === "normale" ? "#dbeafe" :
+  "#f1f5f9";
+
+aiPriority.style.color =
+  suggestedPriority === "urgente" ? "#b91c1c" :
+  suggestedPriority === "normale" ? "#1d4ed8" :
+  "#475569";
     status.textContent = "Statut : " + (request.status || "Non précisé");
     const isCompleted = [
   "completed",
@@ -475,6 +494,7 @@ detailsBtn.addEventListener("click", () => {
    item.append(
   name,
   service,
+  aiPriority,
   phone,
   whatsapp,
   email,
