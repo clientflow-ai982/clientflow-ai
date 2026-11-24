@@ -189,6 +189,14 @@ phone.textContent = "Téléphone : " + (request.phone || "Non renseigné");
 email.textContent = "E-mail : " + (request.email || "Non renseigné");
     const details = document.createElement("p");
 details.textContent = "Détails : " + (request.details || "Aucun détail renseigné");
+    const date = document.createElement("p");
+
+const dateValue = request.createdAt || request.originalTimestamp;
+
+date.textContent = "Date de réception : " +
+  (dateValue
+    ? new Date(dateValue.seconds ? dateValue.seconds * 1000 : dateValue).toLocaleString("fr-FR")
+    : "Non renseignée");
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
 
@@ -223,7 +231,7 @@ details.textContent = "Détails : " + (request.details || "Aucun détail renseig
       }
     });
 
-    item.append(name, service, phone, email, details, status, statusSelect);
+    item.append(name, service, phone, email, details, date, status, statusSelect);
     requestsList.appendChild(item);
   });
 }
