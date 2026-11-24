@@ -193,10 +193,30 @@ details.textContent = "Détails : " + (request.details || "Aucun détail renseig
 
 const dateValue = request.createdAt || request.originalTimestamp;
 
-date.textContent = "Date de réception : " +
-  (dateValue
-    ? new Date(dateValue.seconds ? dateValue.seconds * 1000 : dateValue).toLocaleString("fr-FR")
-    : "Non renseignée");
+let formattedDate = "Non renseignée";
+
+if (dateValue) {
+  if (dateValue.seconds) {
+    formattedDate = new Date(dateValue.seconds * 1000).toLocaleString("fr-FR");
+  } else if (typeof dateValue === "string") {
+    const match = dateValue.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$/);
+
+    if (match) {
+      formattedDate = new Date(
+        Number(match[3]),
+        Number(match[2]) - 1,
+        Number(match[1]),
+        Number(match[4]),
+        Number(match[5]),
+        Number(match[6])
+      ).toLocaleString("fr-FR");
+    }
+  } else {
+    formattedDate = new Date(dateValue).toLocaleString("fr-FR");
+  }
+}
+
+date.textContent = "Date de réception : " + formattedDate;
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
 
