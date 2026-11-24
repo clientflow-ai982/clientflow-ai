@@ -185,6 +185,27 @@ function renderRequests(list) {
     service.textContent = "Service : " + (request.service || "Non précisé");
 const phone = document.createElement("p");
 phone.textContent = "Téléphone : " + (request.phone || "Non renseigné");
+    const whatsapp = document.createElement("a");
+
+const phoneNumber = String(request.phone || "").replace(/\D/g, "");
+
+if (phoneNumber.length >= 9) {
+  const internationalNumber = phoneNumber.startsWith("0")
+    ? "213" + phoneNumber.substring(1)
+    : phoneNumber;
+
+  whatsapp.href = "https://wa.me/" + internationalNumber;
+  whatsapp.textContent = "Contacter sur WhatsApp";
+  whatsapp.target = "_blank";
+  whatsapp.rel = "noopener noreferrer";
+  whatsapp.style.display = "inline-block";
+  whatsapp.style.padding = "10px 15px";
+  whatsapp.style.background = "#25D366";
+  whatsapp.style.color = "white";
+  whatsapp.style.textDecoration = "none";
+  whatsapp.style.borderRadius = "8px";
+  whatsapp.style.margin = "8px 0";
+}
     const email = document.createElement("p");
 email.textContent = "E-mail : " + (request.email || "Non renseigné");
     const details = document.createElement("p");
@@ -251,7 +272,7 @@ date.textContent = "Date de réception : " + formattedDate;
       }
     });
 
-    item.append(name, service, phone, email, details, date, status, statusSelect);
+    item.append(name, service, phone, whatsapp, email, details, date, status, statusSelect);
     requestsList.appendChild(item);
   });
 }
