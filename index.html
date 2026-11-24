@@ -185,6 +185,8 @@ function renderRequests(list) {
     service.textContent = "Service : " + (request.service || "Non précisé");
 const phone = document.createElement("p");
 phone.textContent = "Téléphone : " + (request.phone || "Non renseigné");
+    const email = document.createElement("p");
+email.textContent = "E-mail : " + (request.email || "Non renseigné");
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
 
@@ -219,7 +221,7 @@ phone.textContent = "Téléphone : " + (request.phone || "Non renseigné");
       }
     });
 
-    item.append(name, service, phone, status, statusSelect);
+    item.append(name, service, phone, email, status, statusSelect);
     requestsList.appendChild(item);
   });
 }
