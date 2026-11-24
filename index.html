@@ -74,7 +74,11 @@
     id="searchRequests"
     placeholder="Rechercher une demande..."
   >
-
+<select id="statusFilter" style="padding:10px; margin:10px 0; border-radius:8px;">
+  <option value="all">Toutes les demandes</option>
+  <option value="pending">En attente</option>
+  <option value="completed">Terminées</option>
+</select>
   <div id="requestsList">
     Chargement des demandes...
   </div>
@@ -160,14 +164,32 @@ requestsList.textContent = "";
 
 requests.forEach((request, index) => {
   const searchInput = document.getElementById("searchRequests");
+const statusSelect = document.getElementById("statusFilter");
 
+statusSelect.addEventListener("change", () => {
+  searchInput.dispatchEvent(new Event("input"));
+});
 searchInput.addEventListener("input", () => {
   const searchTerm = searchInput.value.toLowerCase().trim();
 
-  const filteredRequests = requests.filter(r =>
+ const statusFilter = document.getElementById("statusFilter").value;
+
+const filteredRequests = requests.filter(r => {
+  const matchesSearch =
     String(r.customerName || "").toLowerCase().includes(searchTerm) ||
-    String(r.service || "").toLowerCase().includes(searchTerm)
-  );
+    String(r.service || "").toLowerCase().includes(searchTerm);
+
+  const status = String(r.status || "").toLowerCase().trim();
+
+  const matchesStatus =
+    statusFilter === "all" ||
+    (statusFilter === "pending" &&
+      ["pending", "en attente", "nouvelle"].includes(status)) ||
+    (statusFilter === "completed" &&
+      ["completed", "terminée", "terminee", "terminé", "termine"].includes(status));
+
+  return matchesSearch && matchesStatus;
+});
 
   requestsList.textContent = "";
 
