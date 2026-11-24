@@ -247,7 +247,12 @@ const requests = requestsSnapshot.docs.map(doc => ({
 
   return `Bonjour ${name}, nous avons bien reçu votre demande concernant ${service}. Nous restons à votre disposition pour vous apporter les informations nécessaires. Merci.`;
 }
+function generateInternalNotes(request, priority) {
+  const service = request.service || "Service non précisé";
+  const details = request.details || "Aucun détail fourni";
 
+  return `Service demandé : ${service}. Détails communiqués : ${details}. Priorité suggérée : ${priority}. Vérifier les informations avec le client avant de programmer une intervention.`;
+}
 console.log("Demandes récupérées :", requests);
   document.getElementById("totalRequests").textContent = requests.length;
   const pendingCount = requests.filter(r =>
@@ -437,17 +442,19 @@ analyzeBtn.style.cursor = "pointer";
     request,
     result.priority
   );
+  const internalNote = generateInternalNotes(request, result.priority);
 
   try {
     await updateDoc(
       doc(db, "companies", companyId, "requests", request.id),
       {
-        aiAnalysis: result.analysis,
-        aiSuggestedPriority: result.priority,
-        aiProposedResponse: proposedResponse
+        internalNotes: internalNote,
+aiAnalysis: result.analysis,
+aiSuggestedPriority: result.priority,
+aiProposedResponse: proposedResponse
       }
     );
-
+    request.internalNotes = internalNote;
     request.aiAnalysis = result.analysis;
     request.aiSuggestedPriority = result.priority;
     request.aiProposedResponse = proposedResponse;
