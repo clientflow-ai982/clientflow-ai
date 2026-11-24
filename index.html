@@ -113,6 +113,51 @@
   <div id="requestsList">
     Chargement des demandes...
   </div>
+  <hr style="margin:40px 0; border:1px solid #e2e8f0;">
+
+<section id="crmSection">
+  <h2>CRM — Prospection commerciale</h2>
+  <p>Gérez vos entreprises prospects et vos contacts commerciaux.</p>
+
+  <h3>Ajouter un prospect</h3>
+
+  <input id="prospectCompany" type="text"
+    placeholder="Nom de l'entreprise">
+
+  <input id="prospectContact" type="text"
+    placeholder="Nom du contact">
+
+  <input id="prospectPhone" type="tel"
+    placeholder="Téléphone">
+
+  <input id="prospectEmail" type="email"
+    placeholder="Adresse e-mail">
+
+  <input id="prospectWilaya" type="text"
+    placeholder="Wilaya">
+
+  <select id="prospectStatus">
+    <option value="new">Nouveau</option>
+    <option value="contacted">Contacté</option>
+    <option value="interested">Intéressé</option>
+    <option value="customer">Client</option>
+    <option value="lost">Perdu</option>
+  </select>
+
+  <input id="prospectFollowUp" type="date">
+
+  <textarea id="prospectNotes"
+    placeholder="Notes commerciales"></textarea>
+
+  <button id="addProspectBtn" type="button">
+    Ajouter le prospect
+  </button>
+
+  <h3>Liste des prospects</h3>
+  <div id="prospectsList">
+    Chargement des prospects...
+  </div>
+</section>
 </div>
   <script type="module">
     import { initializeApp }
@@ -130,6 +175,7 @@ import {
   getDoc,
   collection,
   getDocs,
+  addDoc,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     const firebaseConfig = {
@@ -562,6 +608,99 @@ applyFilters();
 document.getElementById("totalRequests").textContent = requests.length;
 
   message.textContent += " — Profil Firestore connecté !";
+  // CRM : chargement et enregistrement des prospects
+
+const prospectsRef = collection(
+  db,
+  "companies",
+  companyId,
+  "prospects"
+);
+
+const prospectsList = document.getElementById("prospectsList");
+const addProspectBtn = document.getElementById("addProspectBtn");
+
+async function loadProspects() {
+  prospectsList.textContent = "";
+
+  try {
+    const snapshot = await getDocs(prospectsRef);
+
+    if (snapshot.empty) {
+      prospectsList.textContent = "Aucun prospect enregistré.";
+      return;
+    }
+
+    snapshot.forEach((prospectDoc) => {
+      const prospect = prospectDoc.data();
+
+      const card = document.createElement("div");
+      card.style.background = "white";
+      card.style.padding = "15px";
+      card.style.margin = "10px 0";
+      card.style.borderRadius = "10px";
+
+      const title = document.createElement("h3");
+      title.textContent = prospect.company || "Entreprise sans nom";
+
+      const contact = document.createElement("p");
+      contact.textContent = "Contact : " + (prospect.contact || "Non renseigné");
+
+      const phone = document.createElement("p");
+      phone.textContent = "Téléphone : " + (prospect.phone || "Non renseigné");
+
+      const status = document.createElement("p");
+      status.textContent = "Statut : " + (prospect.status || "Nouveau");
+
+      card.append(title, contact, phone, status);
+      prospectsList.appendChild(card);
+    });
+
+  } catch (error) {
+    prospectsList.textContent = "Erreur : " + error.message;
+  }
+}
+
+addProspectBtn.onclick = async () => {
+  const company = document.getElementById("prospectCompany").value.trim();
+
+  if (!company) {
+    alert("Veuillez saisir le nom de l'entreprise.");
+    return;
+  }
+
+  try {
+    await addDoc(prospectsRef, {
+      company: company,
+      contact: document.getElementById("prospectContact").value.trim(),
+      phone: document.getElementById("prospectPhone").value.trim(),
+      email: document.getElementById("prospectEmail").value.trim(),
+      wilaya: document.getElementById("prospectWilaya").value.trim(),
+      status: document.getElementById("prospectStatus").value,
+      followUp: document.getElementById("prospectFollowUp").value,
+      notes: document.getElementById("prospectNotes").value.trim(),
+      createdAt: new Date()
+    });
+
+    alert("Prospect ajouté avec succès !");
+
+    document.getElementById("prospectCompany").value = "";
+    document.getElementById("prospectContact").value = "";
+    document.getElementById("prospectPhone").value = "";
+    document.getElementById("prospectEmail").value = "";
+    document.getElementById("prospectWilaya").value = "";
+    document.getElementById("prospectStatus").value = "new";
+    document.getElementById("prospectFollowUp").value = "";
+    document.getElementById("prospectNotes").value = "";
+
+    await loadProspects();
+
+  } catch (error) {
+    alert("Erreur lors de l'ajout : " + error.message);
+  }
+};
+
+await loadProspects();
 } else {
   console.log("Profil utilisateur introuvable dans Firestore.");
 }
