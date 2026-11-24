@@ -168,9 +168,9 @@ requestsList.textContent = "";
 
 requests.forEach((request, index) => {
   const searchInput = document.getElementById("searchRequests");
-const statusSelect = document.getElementById("statusFilter");
+const statusFilterMenu = document.getElementById("statusFilter");
 
-statusSelect.addEventListener("change", () => {
+statusFilterMenu.addEventListener("change", () => {
   searchInput.dispatchEvent(new Event("input"));
 });
 searchInput.addEventListener("input", () => {
