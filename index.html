@@ -337,8 +337,51 @@ status.style.color = isCompleted ? "#15803d" : "#b45309";
         alert("Erreur lors de la mise à jour : " + error.message);
       }
     });
+const detailsBtn = document.createElement("button");
+detailsBtn.textContent = "Voir les détails";
 
-    item.append(name, service, phone, whatsapp, email, details, date, status, statusSelect);
+detailsBtn.style.width = "auto";
+detailsBtn.style.padding = "10px 15px";
+detailsBtn.style.margin = "10px 0";
+detailsBtn.style.background = "#2563eb";
+detailsBtn.style.color = "white";
+detailsBtn.style.border = "none";
+detailsBtn.style.borderRadius = "8px";
+detailsBtn.style.cursor = "pointer";
+
+const extraDetails = document.createElement("div");
+extraDetails.style.display = "none";
+extraDetails.style.marginTop = "10px";
+
+const internalNotes = document.createElement("p");
+internalNotes.textContent = "Notes internes : " + (request.internalNotes || "Aucune");
+
+const aiAnalysis = document.createElement("p");
+aiAnalysis.textContent = "Analyse IA : " + (request.aiAnalysis || "Aucune");
+
+const aiResponse = document.createElement("p");
+aiResponse.textContent = "Réponse proposée : " + (request.aiProposedResponse || "Aucune");
+
+extraDetails.append(internalNotes, aiAnalysis, aiResponse);
+
+detailsBtn.addEventListener("click", () => {
+  const isHidden = extraDetails.style.display === "none";
+  extraDetails.style.display = isHidden ? "block" : "none";
+  detailsBtn.textContent = isHidden ? "Masquer les détails" : "Voir les détails";
+});
+    item.append(
+  name,
+  service,
+  phone,
+  whatsapp,
+  email,
+  details,
+  date,
+  status,
+  statusSelect,
+  detailsBtn,
+  extraDetails
+);
     requestsList.appendChild(item);
   });
 }
