@@ -193,6 +193,60 @@ const requests = requestsSnapshot.docs.map(doc => ({
   id: doc.id,
   ...doc.data()
 }));
+  function analyzeRequest(request) {
+  const text = (
+    (request.service || "") + " " +
+    (request.details || "")
+  ).toLowerCase();
+
+  let priority = "normale";
+  let analysis = "Demande de service standard.";
+
+  const urgentWords = [
+    "urgent",
+    "urgence",
+    "fuite importante",
+    "inondation",
+    "éclatement",
+    "rupture de canalisation",
+    "débordement"
+  ];
+
+  const mediumWords = [
+    "fuite",
+    "panne",
+    "réparation",
+    "problème",
+    "dysfonctionnement"
+  ];
+
+  if (urgentWords.some(word => text.includes(word))) {
+    priority = "urgente";
+    analysis = "La demande contient des éléments pouvant indiquer une situation urgente. Une vérification rapide est recommandée.";
+  } else if (mediumWords.some(word => text.includes(word))) {
+    priority = "normale";
+    analysis = "La demande concerne un problème nécessitant une intervention ou une vérification.";
+  }
+
+  return {
+    priority: priority,
+    analysis: analysis
+  };
+}
+  function generateProposedResponse(request, priority) {
+  const name = request.customerName || "Bonjour";
+  const service = request.service || "votre demande";
+
+  if (priority === "urgente") {
+    return `Bonjour ${name}, nous avons bien reçu votre demande concernant ${service}. Votre situation nécessite une vérification rapide. Nous allons vous recontacter pour préciser les détails et convenir de la suite. Merci.`;
+  }
+
+  if (priority === "normale") {
+    return `Bonjour ${name}, nous avons bien reçu votre demande concernant ${service}. Nous allons examiner les informations transmises et vous recontacter pour convenir de la suite. Merci pour votre confiance.`;
+  }
+
+  return `Bonjour ${name}, nous avons bien reçu votre demande concernant ${service}. Nous restons à votre disposition pour vous apporter les informations nécessaires. Merci.`;
+}
 
 console.log("Demandes récupérées :", requests);
   document.getElementById("totalRequests").textContent = requests.length;
@@ -337,6 +391,55 @@ status.style.color = isCompleted ? "#15803d" : "#b45309";
         alert("Erreur lors de la mise à jour : " + error.message);
       }
     });
+const analyzeBtn = document.createElement("button");
+analyzeBtn.textContent = "Analyser cette demande";
+
+analyzeBtn.style.padding = "10px 15px";
+analyzeBtn.style.margin = "10px 5px";
+analyzeBtn.style.background = "#7c3aed";
+analyzeBtn.style.color = "white";
+analyzeBtn.style.border = "none";
+analyzeBtn.style.borderRadius = "8px";
+analyzeBtn.style.cursor = "pointer";
+    analyzeBtn.addEventListener("click", async () => {
+  const requestText = (
+    (request.service || "") + " " +
+    (request.details || "")
+  ).trim();
+
+  if (!requestText) {
+    alert("Impossible d'analyser cette demande : aucune description disponible.");
+    return;
+  }
+
+  const result = analyzeRequest(request);
+
+  const proposedResponse = generateProposedResponse(
+    request,
+    result.priority
+  );
+
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "requests", request.id),
+      {
+        aiAnalysis: result.analysis,
+        aiSuggestedPriority: result.priority,
+        aiProposedResponse: proposedResponse
+      }
+    );
+
+    request.aiAnalysis = result.analysis;
+    request.aiSuggestedPriority = result.priority;
+    request.aiProposedResponse = proposedResponse;
+
+    applyFilters();
+
+    alert("Analyse terminée et enregistrée avec succès !");
+  } catch (error) {
+    alert("Erreur pendant l'analyse : " + error.message);
+  }
+});
 const detailsBtn = document.createElement("button");
 detailsBtn.textContent = "Voir les détails";
 
@@ -369,7 +472,7 @@ detailsBtn.addEventListener("click", () => {
   extraDetails.style.display = isHidden ? "block" : "none";
   detailsBtn.textContent = isHidden ? "Masquer les détails" : "Voir les détails";
 });
-    item.append(
+   item.append(
   name,
   service,
   phone,
@@ -379,6 +482,7 @@ detailsBtn.addEventListener("click", () => {
   date,
   status,
   statusSelect,
+  analyzeBtn,
   detailsBtn,
   extraDetails
 );
