@@ -265,6 +265,20 @@ if (dateValue) {
 date.textContent = "Date de réception : " + formattedDate;
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
+    const isCompleted = [
+  "completed",
+  "terminée",
+  "terminee",
+  "terminé",
+  "termine"
+].includes(String(request.status || "").toLowerCase().trim());
+
+status.style.display = "inline-block";
+status.style.padding = "7px 12px";
+status.style.borderRadius = "20px";
+status.style.fontWeight = "bold";
+status.style.background = isCompleted ? "#dcfce7" : "#fef3c7";
+status.style.color = isCompleted ? "#15803d" : "#b45309";
 
     const statusSelect = document.createElement("select");
 
