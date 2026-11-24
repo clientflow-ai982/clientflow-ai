@@ -187,6 +187,8 @@ const phone = document.createElement("p");
 phone.textContent = "Téléphone : " + (request.phone || "Non renseigné");
     const email = document.createElement("p");
 email.textContent = "E-mail : " + (request.email || "Non renseigné");
+    const details = document.createElement("p");
+details.textContent = "Détails : " + (request.details || "Aucun détail renseigné");
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
 
@@ -221,7 +223,7 @@ email.textContent = "E-mail : " + (request.email || "Non renseigné");
       }
     });
 
-    item.append(name, service, phone, email, status, statusSelect);
+    item.append(name, service, phone, email, details, status, statusSelect);
     requestsList.appendChild(item);
   });
 }
