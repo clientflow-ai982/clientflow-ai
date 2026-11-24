@@ -53,16 +53,37 @@
     <p id="message"></p>
   </div>
 
-<div id="dashboard" style="display:none; padding:25px;">
-  <h1>ClientFlow AI</h1>
-  <p>Gestion intelligente de vos demandes clients</p>
+<div id="dashboard" style="display:none; padding:25px; background:#f1f5f9; min-height:100vh; font-family:Arial,sans-serif; color:#1e293b;">
+  <h1 style="font-size:30px; color:#0f172a; margin-bottom:5px;">
+  ClientFlow AI
+</h1>
 
+<p style="color:#64748b; font-size:15px; margin-top:0;">
+  Less Manual Work. More Happy Clients.
+</p>
   <div>
     <h2>Tableau de bord</h2>
     <p>Bienvenue dans votre espace professionnel.</p>
   </div>
 
-  <div id="stats">
+  <div id="stats" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:15px; margin:25px 0;">
+
+  <div style="background:white; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <p style="color:#64748b;">Demandes totales</p>
+    <h2 id="totalRequests" style="font-size:30px; color:#2563eb;">0</h2>
+  </div>
+
+  <div style="background:white; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <p style="color:#64748b;">En attente</p>
+    <h2 id="pendingRequests" style="font-size:30px; color:#d97706;">0</h2>
+  </div>
+
+  <div style="background:white; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <p style="color:#64748b;">Terminées</p>
+    <h2 id="completedRequests" style="font-size:30px; color:#16a34a;">0</h2>
+  </div>
+
+</div>
     <p>Demandes totales : <span id="totalRequests">0</span></p>
     <p>En attente : <span id="pendingRequests">0</span></p>
     <p>Terminées : <span id="completedRequests">0</span></p>
@@ -70,11 +91,13 @@
 
   <h2>Liste des demandes</h2>
   <input
-    type="search"
-    id="searchRequests"
-    placeholder="Rechercher une demande..."
+  type="search"
+  id="searchRequests"
+  placeholder="Rechercher par nom ou service..."
+  style="width:100%; max-width:400px; padding:13px; border:1px solid #cbd5e1; border-radius:10px; font-size:14px; outline:none; box-sizing:border-box;"
+>
   >
-<select id="statusFilter" style="padding:10px; margin:10px 0; border-radius:8px;">
+<select id="statusFilter" style="padding:13px; margin:10px 0; border:1px solid #cbd5e1; border-radius:10px; background:white; font-size:14px; min-width:200px;">
   <option value="all">Toutes les demandes</option>
   <option value="pending">En attente</option>
   <option value="completed">Terminées</option>
@@ -174,12 +197,18 @@ function renderRequests(list) {
   list.forEach(request => {
     const item = document.createElement("div");
     item.style.background = "white";
-    item.style.padding = "15px";
-    item.style.margin = "10px 0";
-    item.style.borderRadius = "10px";
+item.style.padding = "20px";
+item.style.margin = "15px 0";
+item.style.borderRadius = "14px";
+item.style.boxShadow = "0 3px 10px rgba(0,0,0,0.06)";
+item.style.border = "1px solid #e2e8f0";
 
     const name = document.createElement("h3");
     name.textContent = request.customerName || "Client sans nom";
+    name.style.color = "#0f172a";
+name.style.fontSize = "19px";
+name.style.marginTop = "0";
+name.style.marginBottom = "12px";
 
     const service = document.createElement("p");
     service.textContent = "Service : " + (request.service || "Non précisé");
