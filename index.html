@@ -163,41 +163,15 @@ document.getElementById("pendingRequests").textContent = pendingCount;
 ).length;
 
 document.getElementById("completedRequests").textContent = completedCount;
-  const requestsList = document.getElementById("requestsList");
-requestsList.textContent = "";
-
-requests.forEach((request, index) => {
-  const searchInput = document.getElementById("searchRequests");
+  
+const requestsList = document.getElementById("requestsList");
+const searchInput = document.getElementById("searchRequests");
 const statusFilterMenu = document.getElementById("statusFilter");
 
-statusFilterMenu.addEventListener("change", () => {
-  searchInput.dispatchEvent(new Event("input"));
-});
-searchInput.addEventListener("input", () => {
-  const searchTerm = searchInput.value.toLowerCase().trim();
-
- const statusFilter = document.getElementById("statusFilter").value;
-
-const filteredRequests = requests.filter(r => {
-  const matchesSearch =
-    String(r.customerName || "").toLowerCase().includes(searchTerm) ||
-    String(r.service || "").toLowerCase().includes(searchTerm);
-
-  const status = String(r.status || "").toLowerCase().trim();
-
-  const matchesStatus =
-    statusFilter === "all" ||
-    (statusFilter === "pending" &&
-      ["pending", "en attente", "nouvelle"].includes(status)) ||
-    (statusFilter === "completed" &&
-      ["completed", "terminée", "terminee", "terminé", "termine"].includes(status));
-
-  return matchesSearch && matchesStatus;
-});
-
+function renderRequests(list) {
   requestsList.textContent = "";
 
-  filteredRequests.forEach(request => {
+  list.forEach(request => {
     const item = document.createElement("div");
     item.style.background = "white";
     item.style.padding = "15px";
@@ -212,85 +186,87 @@ const filteredRequests = requests.filter(r => {
 
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
-const statusSelect = document.createElement("select");
 
-statusSelect.innerHTML = `
-  <option value="pending">En attente</option>
-  <option value="completed">Terminée</option>
-`;
+    const statusSelect = document.createElement("select");
 
-const currentStatus = String(request.status || "").toLowerCase().trim();
+    statusSelect.innerHTML = `
+      <option value="pending">En attente</option>
+      <option value="completed">Terminée</option>
+    `;
 
-if (["completed", "terminée", "terminee", "terminé", "termine"].includes(currentStatus)) {
-  statusSelect.value = "completed";
-} else {
-  statusSelect.value = "pending";
-}
+    const currentStatus = String(request.status || "").toLowerCase().trim();
 
-statusSelect.addEventListener("change", async () => {
-  try {
-    await updateDoc(
-      doc(db, "companies", companyId, "requests", request.id),
-      { status: statusSelect.value }
-    );
+    if (["completed", "terminée", "terminee", "terminé", "termine"].includes(currentStatus)) {
+      statusSelect.value = "completed";
+    } else {
+      statusSelect.value = "pending";
+    }
 
-    request.status = statusSelect.value;
-    status.textContent = "Statut : " + statusSelect.value;
-    alert("Statut mis à jour avec succès !");
-  } catch (error) {
-    alert("Erreur lors de la mise à jour : " + error.message);
-  }
-});
+    statusSelect.addEventListener("change", async () => {
+      try {
+        await updateDoc(
+          doc(db, "companies", companyId, "requests", request.id),
+          { status: statusSelect.value }
+        );
+
+        request.status = statusSelect.value;
+        applyFilters();
+
+        alert("Statut mis à jour avec succès !");
+      } catch (error) {
+        alert("Erreur lors de la mise à jour : " + error.message);
+      }
+    });
+
     item.append(name, service, status, statusSelect);
     requestsList.appendChild(item);
   });
-});
-  const item = document.createElement("div");
-  item.style.background = "white";
-  item.style.padding = "15px";
-  item.style.margin = "10px 0";
-  item.style.borderRadius = "10px";
-
-  const name = document.createElement("h3");
-  name.textContent = request.customerName || "Client sans nom";
-
-  const service = document.createElement("p");
-  service.textContent = "Service : " + (request.service || "Non précisé");
-
-  const status = document.createElement("p");
-  status.textContent = "Statut : " + (request.status || "Non précisé");
-const statusSelect = document.createElement("select");
-
-statusSelect.innerHTML = `
-  <option value="pending">En attente</option>
-  <option value="completed">Terminée</option>
-`;
-
-const currentStatus = String(request.status || "").toLowerCase().trim();
-
-if (["completed", "terminée", "terminee", "terminé", "termine"].includes(currentStatus)) {
-  statusSelect.value = "completed";
-} else {
-  statusSelect.value = "pending";
 }
 
-statusSelect.addEventListener("change", async () => {
-  try {
-    await updateDoc(
-      doc(db, "companies", companyId, "requests", request.id),
-      { status: statusSelect.value }
-    );
+function applyFilters() {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  const statusFilter = statusFilterMenu.value;
 
-    request.status = statusSelect.value;
-    status.textContent = "Statut : " + statusSelect.value;
-    alert("Statut mis à jour avec succès !");
-  } catch (error) {
-    alert("Erreur lors de la mise à jour : " + error.message);
-  }
-});
-  item.append(name, service, status, statusSelect);
-  requestsList.appendChild(item);
-});
+  const filteredRequests = requests.filter(r => {
+    const matchesSearch =
+      String(r.customerName || "").toLowerCase().includes(searchTerm) ||
+      String(r.service || "").toLowerCase().includes(searchTerm);
+
+    const status = String(r.status || "").toLowerCase().trim();
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "pending" &&
+        ["pending", "en attente", "nouvelle"].includes(status)) ||
+      (statusFilter === "completed" &&
+        ["completed", "terminée", "terminee", "terminé", "termine"].includes(status));
+
+    return matchesSearch && matchesStatus;
+  });
+
+  renderRequests(filteredRequests);
+  document.getElementById("pendingRequests").textContent =
+  requests.filter(r =>
+    ["pending", "en attente", "nouvelle"].includes(
+      String(r.status || "").toLowerCase().trim()
+    )
+  ).length;
+
+document.getElementById("completedRequests").textContent =
+  requests.filter(r =>
+    ["completed", "terminée", "terminee", "terminé", "termine"].includes(
+      String(r.status || "").toLowerCase().trim()
+    )
+  ).length;
+}
+
+searchInput.addEventListener("input", applyFilters);
+statusFilterMenu.addEventListener("change", applyFilters);
+
+applyFilters();
+
+document.getElementById("totalRequests").textContent = requests.length;
+
   message.textContent += " — Profil Firestore connecté !";
 } else {
   console.log("Profil utilisateur introuvable dans Firestore.");
