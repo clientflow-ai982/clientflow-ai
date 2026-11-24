@@ -97,7 +97,8 @@ import {
   doc,
   getDoc,
   collection,
-  getDocs
+  getDocs,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyD7GDT8LdP_1-J5wouejg0Ot52iuxxGFvo",
@@ -142,7 +143,10 @@ document.getElementById("dashboard").style.display = "block";
   const requestsRef = collection(db, "companies", companyId, "requests");
 const requestsSnapshot = await getDocs(requestsRef);
 
-const requests = requestsSnapshot.docs.map(doc => doc.data());
+const requests = requestsSnapshot.docs.map(doc => ({
+  id: doc.id,
+  ...doc.data()
+}));
 
 console.log("Demandes récupérées :", requests);
   document.getElementById("totalRequests").textContent = requests.length;
@@ -208,8 +212,36 @@ const filteredRequests = requests.filter(r => {
 
     const status = document.createElement("p");
     status.textContent = "Statut : " + (request.status || "Non précisé");
+const statusSelect = document.createElement("select");
 
-    item.append(name, service, status);
+statusSelect.innerHTML = `
+  <option value="pending">En attente</option>
+  <option value="completed">Terminée</option>
+`;
+
+const currentStatus = String(request.status || "").toLowerCase().trim();
+
+if (["completed", "terminée", "terminee", "terminé", "termine"].includes(currentStatus)) {
+  statusSelect.value = "completed";
+} else {
+  statusSelect.value = "pending";
+}
+
+statusSelect.addEventListener("change", async () => {
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "requests", request.id),
+      { status: statusSelect.value }
+    );
+
+    request.status = statusSelect.value;
+    status.textContent = "Statut : " + statusSelect.value;
+    alert("Statut mis à jour avec succès !");
+  } catch (error) {
+    alert("Erreur lors de la mise à jour : " + error.message);
+  }
+});
+    item.append(name, service, status, statusSelect);
     requestsList.appendChild(item);
   });
 });
@@ -227,8 +259,36 @@ const filteredRequests = requests.filter(r => {
 
   const status = document.createElement("p");
   status.textContent = "Statut : " + (request.status || "Non précisé");
+const statusSelect = document.createElement("select");
 
-  item.append(name, service, status);
+statusSelect.innerHTML = `
+  <option value="pending">En attente</option>
+  <option value="completed">Terminée</option>
+`;
+
+const currentStatus = String(request.status || "").toLowerCase().trim();
+
+if (["completed", "terminée", "terminee", "terminé", "termine"].includes(currentStatus)) {
+  statusSelect.value = "completed";
+} else {
+  statusSelect.value = "pending";
+}
+
+statusSelect.addEventListener("change", async () => {
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "requests", request.id),
+      { status: statusSelect.value }
+    );
+
+    request.status = statusSelect.value;
+    status.textContent = "Statut : " + statusSelect.value;
+    alert("Statut mis à jour avec succès !");
+  } catch (error) {
+    alert("Erreur lors de la mise à jour : " + error.message);
+  }
+});
+  item.append(name, service, status, statusSelect);
   requestsList.appendChild(item);
 });
   message.textContent += " — Profil Firestore connecté !";
