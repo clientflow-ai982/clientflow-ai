@@ -57,6 +57,18 @@
   <h1 style="font-size:30px; color:#0f172a; margin-bottom:5px;">
   ClientFlow AI
 </h1>
+  <button id="logoutBtn" style="
+  width:auto;
+  padding:10px 18px;
+  margin:10px 0 20px;
+  background:#dc2626;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+">
+  Déconnexion
+</button>
 
 <p style="color:#64748b; font-size:15px; margin-top:0;">
   Less Manual Work. More Happy Clients.
@@ -107,10 +119,11 @@
       from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 
     import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import {
   getFirestore,
   doc,
@@ -136,6 +149,20 @@ import {
 
     const button = document.getElementById("loginBtn");
     const message = document.getElementById("message");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+
+    document.getElementById("dashboard").style.display = "none";
+    document.querySelector(".login-card").style.display = "block";
+
+    message.textContent = "Vous êtes déconnecté avec succès.";
+  } catch (error) {
+    alert("Erreur lors de la déconnexion : " + error.message);
+  }
+});
 
     button.addEventListener("click", async () => {
       button.disabled = true;
