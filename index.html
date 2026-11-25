@@ -364,8 +364,8 @@ if (phoneNumber.length >= 9) {
   whatsapp.style.borderRadius = "8px";
   whatsapp.style.margin = "8px 0";
 }
-    const email = document.createElement("p");
-email.textContent = "E-mail : " + (request.email || "Non renseigné");
+    const requestEmail = document.createElement("p");
+requestEmail.textContent = "E-mail : " + (request.email || "Non renseigné");
     const details = document.createElement("p");
 details.textContent = "Détails : " + (request.details || "Aucun détail renseigné");
     const date = document.createElement("p");
@@ -551,7 +551,7 @@ detailsBtn.addEventListener("click", () => {
   aiPriority,
   phone,
   whatsapp,
-  email,
+  requestEmail,
   details,
   date,
   status,
