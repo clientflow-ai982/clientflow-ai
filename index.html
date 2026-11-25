@@ -649,6 +649,17 @@ async function loadProspects() {
 
       const phone = document.createElement("p");
       phone.textContent = "Téléphone : " + (prospect.phone || "Non renseigné");
+      const email = document.createElement("p");
+email.textContent = "E-mail : " + (prospect.email || "Non renseigné");
+
+const wilaya = document.createElement("p");
+wilaya.textContent = "Wilaya : " + (prospect.wilaya || "Non renseignée");
+
+const followUp = document.createElement("p");
+followUp.textContent = "Date de relance : " + (prospect.followUp || "Non programmée");
+
+const notes = document.createElement("p");
+notes.textContent = "Notes : " + (prospect.notes || "Aucune");
 
       const status = document.createElement("p");
       const statusLabels = {
