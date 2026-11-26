@@ -772,15 +772,34 @@ if (dateParts[0].length === 4) {
   }
 
   prospects.forEach((prospect) => {
-    const item = document.createElement("p");
-    item.textContent =
-      (prospect.company || "Entreprise sans nom") +
-      " — Contact : " +
-      (prospect.contact || "Non renseigné") +
-      " — Date : " +
-      prospect.followUp;
+    const item = document.createElement("div");
 
-    container.appendChild(item);
+const info = document.createElement("span");
+info.textContent =
+  (prospect.company || "Entreprise sans nom") +
+  " — Contact : " +
+  (prospect.contact || "Non renseigné") +
+  " — Date : " +
+  prospect.followUp;
+
+const viewBtn = document.createElement("button");
+viewBtn.textContent = "Voir le prospect";
+
+viewBtn.onclick = () => {
+  document.getElementById("searchProspects").value =
+    prospect.company || "";
+
+  document.getElementById("filterProspectStatus").value = "all";
+
+  loadProspects();
+
+  document.getElementById("crmSection").scrollIntoView({
+    behavior: "smooth"
+  });
+};
+
+item.append(info, viewBtn);
+container.appendChild(item);
   });
 }
 
