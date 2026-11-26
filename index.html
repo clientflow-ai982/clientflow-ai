@@ -117,6 +117,39 @@
 
 <section id="crmSection">
   <h2>CRM — Prospection commerciale</h2>
+  <div id="prospectStats" style="
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 20px 0;
+">
+
+  <div class="stat-card">
+    <h3>Total prospects</h3>
+    <p id="totalProspects">0</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Nouveaux</h3>
+    <p id="newProspects">0</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Contactés</h3>
+    <p id="contactedProspects">0</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Clients</h3>
+    <p id="customerProspects">0</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>Perdus</h3>
+    <p id="lostProspects">0</p>
+  </div>
+
+</div>
   <p>Gérez vos entreprises prospects et vos contacts commerciaux.</p>
 
   <h3>Ajouter un prospect</h3>
@@ -672,7 +705,22 @@ async function loadProspects() {
 
   try {
     const snapshot = await getDocs(prospectsRef);
+const allProspects = snapshot.docs.map(doc => doc.data());
 
+document.getElementById("totalProspects").textContent =
+  allProspects.length;
+
+document.getElementById("newProspects").textContent =
+  allProspects.filter(p => p.status === "new").length;
+
+document.getElementById("contactedProspects").textContent =
+  allProspects.filter(p => p.status === "contacted").length;
+
+document.getElementById("customerProspects").textContent =
+  allProspects.filter(p => p.status === "customer").length;
+
+document.getElementById("lostProspects").textContent =
+  allProspects.filter(p => p.status === "lost").length;
     if (snapshot.empty) {
       prospectsList.textContent = "Aucun prospect enregistré.";
       return;
