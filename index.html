@@ -731,6 +731,18 @@ statusSelect.addEventListener("change", async () => {
     alert("Erreur lors de la mise à jour : " + error.message);
   }
 });
+      const editBtn = document.createElement("button");
+editBtn.textContent = "Modifier";
+editBtn.style.background = "#2563eb";
+editBtn.style.color = "white";
+editBtn.style.padding = "8px 12px";
+editBtn.style.border = "none";
+editBtn.style.borderRadius = "6px";
+editBtn.style.cursor = "pointer";
+
+editBtn.addEventListener("click", async () => {
+  alert("La modification sera bientôt disponible.");
+});
       const deleteBtn = document.createElement("button");
 deleteBtn.textContent = "Supprimer";
 deleteBtn.style.background = "#dc2626";
@@ -770,6 +782,7 @@ deleteBtn.addEventListener("click", async () => {
   notes,
   status,
   statusSelect,
+  editBtn,
   deleteBtn
 );
       prospectsList.appendChild(card);
