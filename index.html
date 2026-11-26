@@ -741,7 +741,52 @@ editBtn.style.borderRadius = "6px";
 editBtn.style.cursor = "pointer";
 
 editBtn.addEventListener("click", async () => {
-  alert("La modification sera bientôt disponible.");
+  const company = prompt("Nom de l'entreprise :", prospect.company || "");
+  if (company === null) return;
+
+  if (!company.trim()) {
+    alert("Le nom de l'entreprise est obligatoire.");
+    return;
+  }
+
+  const contact = prompt("Nom du contact :", prospect.contact || "");
+  if (contact === null) return;
+
+  const phone = prompt("Téléphone :", prospect.phone || "");
+  if (phone === null) return;
+
+  const email = prompt("Adresse e-mail :", prospect.email || "");
+  if (email === null) return;
+
+  const wilaya = prompt("Wilaya :", prospect.wilaya || "");
+  if (wilaya === null) return;
+
+  const followUp = prompt("Date de relance (AAAA-MM-JJ) :", prospect.followUp || "");
+  if (followUp === null) return;
+
+  const notes = prompt("Notes commerciales :", prospect.notes || "");
+  if (notes === null) return;
+
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "prospects", prospectDoc.id),
+      {
+        company: company.trim(),
+        contact: contact.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+        wilaya: wilaya.trim(),
+        followUp: followUp.trim(),
+        notes: notes.trim()
+      }
+    );
+
+    alert("Prospect modifié avec succès !");
+    await loadProspects();
+
+  } catch (error) {
+    alert("Erreur lors de la modification : " + error.message);
+  }
 });
       const deleteBtn = document.createElement("button");
 deleteBtn.textContent = "Supprimer";
