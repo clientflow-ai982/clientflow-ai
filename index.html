@@ -672,6 +672,36 @@ notes.textContent = "Notes : " + (prospect.notes || "Aucune");
 
 status.textContent =
   "Statut : " + (statusLabels[prospect.status] || "Nouveau");
+      const statusSelect = document.createElement("select");
+
+Object.entries(statusLabels).forEach(([value, label]) => {
+  const option = document.createElement("option");
+  option.value = value;
+  option.textContent = label;
+
+  if (value === prospect.status) {
+    option.selected = true;
+  }
+
+  statusSelect.appendChild(option);
+});
+
+statusSelect.addEventListener("change", async () => {
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "prospects", prospectDoc.id),
+      {
+        status: statusSelect.value
+      }
+    );
+
+    alert("Statut du prospect mis à jour !");
+    await loadProspects();
+
+  } catch (error) {
+    alert("Erreur lors de la mise à jour : " + error.message);
+  }
+});
 
       card.append(
   title,
@@ -681,7 +711,8 @@ status.textContent =
   wilaya,
   followUp,
   notes,
-  status
+  status,
+  statusSelect
 );
       prospectsList.appendChild(card);
     });
