@@ -154,6 +154,23 @@
   </button>
 
   <h3>Liste des prospects</h3>
+  <input
+  type="text"
+  id="searchProspects"
+  placeholder="Rechercher une entreprise ou un contact..."
+  style="width:90%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;"
+>
+  <select id="filterProspectStatus"
+  style="width:90%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+
+  <option value="all">Tous les prospects</option>
+  <option value="new">Nouveau</option>
+  <option value="contacted">Contacté</option>
+  <option value="interested">Intéressé</option>
+  <option value="customer">Client</option>
+  <option value="lost">Perdu</option>
+
+</select>
   <div id="prospectsList">
     Chargement des prospects...
   </div>
@@ -660,10 +677,30 @@ async function loadProspects() {
       prospectsList.textContent = "Aucun prospect enregistré.";
       return;
     }
+const searchTerm = document.getElementById("searchProspects").value
+  .toLowerCase()
+  .trim();
 
+const selectedStatus = document.getElementById("filterProspectStatus").value;
+
+let visibleCount = 0;
     snapshot.forEach((prospectDoc) => {
       const prospect = prospectDoc.data();
+const searchableText = (
+  (prospect.company || "") + " " +
+  (prospect.contact || "") + " " +
+  (prospect.phone || "") + " " +
+  (prospect.email || "")
+).toLowerCase();
 
+if (
+  !searchableText.includes(searchTerm) ||
+  (selectedStatus !== "all" && prospect.status !== selectedStatus)
+) {
+  return;
+}
+
+visibleCount++;
       const card = document.createElement("div");
       card.style.background = "white";
       card.style.padding = "15px";
@@ -832,12 +869,23 @@ deleteBtn.addEventListener("click", async () => {
 );
       prospectsList.appendChild(card);
     });
-
+if (visibleCount === 0) {
+  prospectsList.textContent = "Aucun prospect correspondant à votre recherche.";
+}
   } catch (error) {
     prospectsList.textContent = "Erreur : " + error.message;
   }
 }
+const searchProspects = document.getElementById("searchProspects");
+const filterProspectStatus = document.getElementById("filterProspectStatus");
 
+searchProspects.addEventListener("input", () => {
+  loadProspects();
+});
+
+filterProspectStatus.addEventListener("change", () => {
+  loadProspects();
+});
 addProspectBtn.onclick = async () => {
   const company = document.getElementById("prospectCompany").value.trim();
 
