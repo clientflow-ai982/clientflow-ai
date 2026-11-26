@@ -117,6 +117,21 @@
 
 <section id="crmSection">
   <h2>CRM — Prospection commerciale</h2>
+  <section id="followUpSection" style="margin:25px 0;">
+  <h3>🔔 Rappels commerciaux</h3>
+
+  <div id="overdueProspects">
+    Chargement des relances en retard...
+  </div>
+
+  <div id="todayProspects">
+    Chargement des relances du jour...
+  </div>
+
+  <div id="upcomingProspects">
+    Chargement des prochaines relances...
+  </div>
+</section>
   <div id="prospectStats" style="
   display: flex;
   flex-wrap: wrap;
@@ -706,7 +721,61 @@ async function loadProspects() {
   try {
     const snapshot = await getDocs(prospectsRef);
 const allProspects = snapshot.docs.map(doc => doc.data());
+const today = new Date();
+today.setHours(0, 0, 0, 0);
 
+const overdue = [];
+const dueToday = [];
+const upcoming = [];
+
+allProspects.forEach((prospect) => {
+  if (!prospect.followUp || ["customer", "lost"].includes(prospect.status)) {
+    return;
+  }
+
+  const followUpDate = new Date(prospect.followUp + "T00:00:00");
+
+  if (isNaN(followUpDate.getTime())) return;
+
+  if (followUpDate < today) {
+    overdue.push(prospect);
+  } else if (followUpDate.getTime() === today.getTime()) {
+    dueToday.push(prospect);
+  } else {
+    upcoming.push(prospect);
+  }
+});
+    function displayFollowUps(elementId, title, prospects) {
+  const container = document.getElementById(elementId);
+  container.textContent = "";
+
+  const heading = document.createElement("h4");
+  heading.textContent = title + " (" + prospects.length + ")";
+  container.appendChild(heading);
+
+  if (prospects.length === 0) {
+    const message = document.createElement("p");
+    message.textContent = "Aucune relance.";
+    container.appendChild(message);
+    return;
+  }
+
+  prospects.forEach((prospect) => {
+    const item = document.createElement("p");
+    item.textContent =
+      (prospect.company || "Entreprise sans nom") +
+      " — Contact : " +
+      (prospect.contact || "Non renseigné") +
+      " — Date : " +
+      prospect.followUp;
+
+    container.appendChild(item);
+  });
+}
+
+displayFollowUps("overdueProspects", "Relances en retard", overdue);
+displayFollowUps("todayProspects", "Relances aujourd'hui", dueToday);
+displayFollowUps("upcomingProspects", "Prochaines relances", upcoming);
 document.getElementById("totalProspects").textContent =
   allProspects.length;
 
