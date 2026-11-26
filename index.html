@@ -789,7 +789,7 @@ viewBtn.onclick = () => {
   alert("Bouton Voir le prospect activé !");
   document.getElementById("searchProspects").value =
     prospect.company || "";
-
+alert("Entreprise recherchée : " + prospect.company);
   document.getElementById("filterProspectStatus").value = "all";
 
   loadProspects();
