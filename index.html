@@ -733,8 +733,19 @@ allProspects.forEach((prospect) => {
     return;
   }
 
-  const followUpDate = new Date(prospect.followUp + "T00:00:00");
+  const dateParts = prospect.followUp.split("-");
 
+let followUpDate;
+
+if (dateParts[0].length === 4) {
+  followUpDate = new Date(
+    dateParts[0] + "-" + dateParts[1] + "-" + dateParts[2] + "T00:00:00"
+  );
+} else {
+  followUpDate = new Date(
+    dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + "T00:00:00"
+  );
+}
   if (isNaN(followUpDate.getTime())) return;
 
   if (followUpDate < today) {
