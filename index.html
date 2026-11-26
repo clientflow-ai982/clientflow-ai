@@ -754,6 +754,38 @@ visibleCount++;
       card.style.padding = "15px";
       card.style.margin = "10px 0";
       card.style.borderRadius = "10px";
+      const interactionTitle = document.createElement("h4");
+interactionTitle.textContent = "Historique des interactions";
+
+const interactionDate = document.createElement("input");
+interactionDate.type = "date";
+interactionDate.value = new Date().toISOString().split("T")[0];
+
+const interactionMethod = document.createElement("select");
+
+[
+  ["phone", "Téléphone"],
+  ["whatsapp", "WhatsApp"],
+  ["email", "E-mail"]
+].forEach(([value, label]) => {
+  const option = document.createElement("option");
+  option.value = value;
+  option.textContent = label;
+  interactionMethod.appendChild(option);
+});
+
+const interactionResult = document.createElement("textarea");
+interactionResult.placeholder = "Résultat de l'échange...";
+
+const nextAction = document.createElement("input");
+nextAction.type = "text";
+nextAction.placeholder = "Prochaine action à effectuer...";
+
+const saveInteractionBtn = document.createElement("button");
+saveInteractionBtn.textContent = "Enregistrer l'interaction";
+
+const interactionHistory = document.createElement("div");
+interactionHistory.textContent = "Aucune interaction enregistrée.";
 
       const title = document.createElement("h3");
       title.textContent = prospect.company || "Entreprise sans nom";
@@ -915,6 +947,87 @@ deleteBtn.addEventListener("click", async () => {
   editBtn,
   deleteBtn
 );
+      card.append(
+  interactionTitle,
+  interactionDate,
+  interactionMethod,
+  interactionResult,
+  nextAction,
+  saveInteractionBtn,
+  interactionHistory
+);
+      const interactionsRef = collection(
+  db,
+  "companies",
+  companyId,
+  "prospects",
+  prospectDoc.id,
+  "interactions"
+);
+async function loadInteractions() {
+  interactionHistory.textContent = "";
+
+  try {
+    const snapshot = await getDocs(interactionsRef);
+
+    if (snapshot.empty) {
+      interactionHistory.textContent = "Aucune interaction enregistrée.";
+      return;
+    }
+
+    snapshot.forEach((interactionDoc) => {
+      const interaction = interactionDoc.data();
+
+      const item = document.createElement("p");
+
+      const methods = {
+        phone: "Téléphone",
+        whatsapp: "WhatsApp",
+        email: "E-mail"
+      };
+
+      item.textContent =
+        "Date : " + (interaction.date || "Non précisée") +
+        " | Moyen : " + (methods[interaction.method] || interaction.method) +
+        " | Résultat : " + interaction.result +
+        " | Prochaine action : " + (interaction.nextAction || "Aucune");
+
+      interactionHistory.appendChild(item);
+    });
+
+  } catch (error) {
+    interactionHistory.textContent =
+      "Erreur de chargement : " + error.message;
+  }
+}
+
+loadInteractions();
+saveInteractionBtn.addEventListener("click", async () => {
+  const result = interactionResult.value.trim();
+
+  if (!result) {
+    alert("Veuillez saisir le résultat de l'échange.");
+    return;
+  }
+
+  try {
+    await addDoc(interactionsRef, {
+      date: interactionDate.value,
+      method: interactionMethod.value,
+      result: result,
+      nextAction: nextAction.value.trim(),
+      createdAt: new Date()
+    });
+
+    alert("Interaction enregistrée avec succès !");
+
+    interactionResult.value = "";
+    nextAction.value = "";
+await loadInteractions();
+  } catch (error) {
+    alert("Erreur : " + error.message);
+  }
+});
       prospectsList.appendChild(card);
     });
 if (visibleCount === 0) {
