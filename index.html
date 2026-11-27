@@ -802,6 +802,17 @@ snapshot.docs.forEach((prospectDoc) => {
   const contactName = document.createElement("p");
   contactName.textContent =
     "Contact : " + (prospect.contact || "Non renseigné");
+  const phoneInfo = document.createElement("p");
+phoneInfo.textContent =
+  "Téléphone : " + (prospect.phone || "Non renseigné");
+
+const wilayaInfo = document.createElement("p");
+wilayaInfo.textContent =
+  "Wilaya : " + (prospect.wilaya || "Non renseignée");
+
+const followUpInfo = document.createElement("p");
+followUpInfo.textContent =
+  "Prochaine relance : " + (prospect.followUp || "Non planifiée");
 const statusSelect = document.createElement("select");
 
 [
@@ -832,7 +843,14 @@ statusSelect.onchange = async () => {
     alert("Erreur lors du changement de statut : " + error.message);
   }
 };
-  prospectCard.append(companyName, contactName, statusSelect);
+  prospectCard.append(
+  companyName,
+  contactName,
+  phoneInfo,
+  wilayaInfo,
+  followUpInfo,
+  statusSelect
+);
   column.appendChild(prospectCard);
 });
   kanbanBoard.appendChild(column);
