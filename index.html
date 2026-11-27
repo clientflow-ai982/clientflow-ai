@@ -861,6 +861,7 @@ const interestedList = smartAlertResults.filter(item =>
 );
 
 
+
 function displaySmartAlerts(containerId, title, prospects, emptyMessage) {
   const container = document.getElementById(containerId);
   container.textContent = "";
@@ -904,9 +905,46 @@ function displaySmartAlerts(containerId, title, prospects, emptyMessage) {
     };
 
     row.append(name, viewButton);
+
+    // Bouton WhatsApp uniquement pour les prospects en retard
+    if (containerId === "inactiveProspects") {
+      const whatsappButton = document.createElement("button");
+
+      whatsappButton.textContent = "📱 Contacter sur WhatsApp";
+      whatsappButton.style.marginLeft = "8px";
+      whatsappButton.style.background = "#16A34A";
+      whatsappButton.style.color = "white";
+      whatsappButton.style.border = "none";
+      whatsappButton.style.padding = "8px";
+      whatsappButton.style.borderRadius = "6px";
+
+      const phone = (item.prospect.phone || "").replace(/\D/g, "");
+
+      if (phone) {
+        let whatsappNumber = phone;
+
+        if (whatsappNumber.startsWith("0")) {
+          whatsappNumber = "213" + whatsappNumber.substring(1);
+        }
+
+        whatsappButton.onclick = () => {
+          window.open(
+            "https://wa.me/" + whatsappNumber,
+            "_blank"
+          );
+        };
+      } else {
+        whatsappButton.disabled = true;
+        whatsappButton.textContent = "Aucun téléphone";
+      }
+
+      row.appendChild(whatsappButton);
+    }
+
     container.appendChild(row);
   });
 }
+
 
 displaySmartAlerts(
   "inactiveProspects",
