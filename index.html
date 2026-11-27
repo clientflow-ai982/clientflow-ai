@@ -928,11 +928,26 @@ function displaySmartAlerts(containerId, title, prospects, emptyMessage) {
         }
 
         whatsappButton.onclick = () => {
-          window.open(
-            "https://wa.me/" + whatsappNumber,
-            "_blank"
-          );
-        };
+  const companyName =
+    item.prospect.company || "votre entreprise";
+
+  const message =
+    "Bonjour, je me permets de revenir vers vous concernant notre dernier échange. " +
+    "Je souhaitais savoir si vous êtes toujours intéressé(e) par nos services. " +
+    "Je reste à votre disposition pour toute information complémentaire. " +
+    "Bonne journée !\n\n" +
+    "ClientFlow AI";
+
+  const whatsappURL =
+    "https://wa.me/" +
+    whatsappNumber +
+    "?text=" +
+    encodeURIComponent(
+      "Bonjour " + companyName + ",\n\n" + message
+    );
+
+  window.open(whatsappURL, "_blank");
+};
       } else {
         whatsappButton.disabled = true;
         whatsappButton.textContent = "Aucun téléphone";
