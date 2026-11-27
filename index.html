@@ -802,8 +802,37 @@ snapshot.docs.forEach((prospectDoc) => {
   const contactName = document.createElement("p");
   contactName.textContent =
     "Contact : " + (prospect.contact || "Non renseigné");
+const statusSelect = document.createElement("select");
 
-  prospectCard.append(companyName, contactName);
+[
+  ["new", "Nouveau"],
+  ["contacted", "Contacté"],
+  ["interested", "Intéressé"],
+  ["customer", "Client"],
+  ["lost", "Perdu"]
+].forEach(([value, label]) => {
+  const option = document.createElement("option");
+  option.value = value;
+  option.textContent = label;
+  statusSelect.appendChild(option);
+});
+
+statusSelect.value = prospect.status;
+
+statusSelect.onchange = async () => {
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "prospects", prospectDoc.id),
+      { status: statusSelect.value }
+    );
+
+    await loadProspects();
+
+  } catch (error) {
+    alert("Erreur lors du changement de statut : " + error.message);
+  }
+};
+  prospectCard.append(companyName, contactName, statusSelect);
   column.appendChild(prospectCard);
 });
   kanbanBoard.appendChild(column);
