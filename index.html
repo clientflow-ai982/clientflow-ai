@@ -158,7 +158,15 @@
     <h3>Clients</h3>
     <p id="customerProspects">0</p>
   </div>
+<div class="stat-card">
+  <h3>Intéressés</h3>
+  <p id="interestedProspects">0</p>
+</div>
 
+<div class="stat-card">
+  <h3>Taux de conversion</h3>
+  <p id="conversionRate">0 %</p>
+</div>
   <div class="stat-card">
     <h3>Perdus</h3>
     <p id="lostProspects">0</p>
@@ -847,6 +855,16 @@ document.getElementById("customerProspects").textContent =
 
 document.getElementById("lostProspects").textContent =
   allProspects.filter(p => p.status === "lost").length;
+    document.getElementById("interestedProspects").textContent =
+  allProspects.filter(p => p.status === "interested").length;
+
+const conversionRate = allProspects.length === 0
+  ? 0
+  : (allProspects.filter(p => p.status === "customer").length
+      / allProspects.length) * 100;
+
+document.getElementById("conversionRate").textContent =
+  conversionRate.toFixed(1) + " %";
     if (snapshot.empty) {
       prospectsList.textContent = "Aucun prospect enregistré.";
       return;
