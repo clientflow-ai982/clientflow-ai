@@ -781,7 +781,31 @@ kanbanStatuses.forEach((status) => {
   const count = document.createElement("p");
   count.textContent = statusProspects.length + " prospect(s)";
   column.appendChild(count);
+snapshot.docs.forEach((prospectDoc) => {
+  const prospect = prospectDoc.data();
 
+  if (prospect.status !== status.key) {
+    return;
+  }
+
+  const prospectCard = document.createElement("div");
+
+  prospectCard.style.background = "white";
+  prospectCard.style.padding = "12px";
+  prospectCard.style.margin = "10px 0";
+  prospectCard.style.borderRadius = "8px";
+  prospectCard.style.boxShadow = "0 2px 5px rgba(0,0,0,0.08)";
+
+  const companyName = document.createElement("strong");
+  companyName.textContent = prospect.company || "Entreprise sans nom";
+
+  const contactName = document.createElement("p");
+  contactName.textContent =
+    "Contact : " + (prospect.contact || "Non renseigné");
+
+  prospectCard.append(companyName, contactName);
+  column.appendChild(prospectCard);
+});
   kanbanBoard.appendChild(column);
 });
 const today = new Date();
