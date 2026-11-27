@@ -1239,6 +1239,30 @@ if (overdue.length > 0) {
 } else {
   overdueAlertBanner.style.display = "none";
 }
+    // Bouton d'accès aux prospects en retard
+
+if (overdue.length > 0) {
+  const contactOverdueButton = document.createElement("button");
+
+  contactOverdueButton.textContent =
+    "📱 Voir et contacter les prospects en retard";
+
+  contactOverdueButton.style.marginTop = "10px";
+  contactOverdueButton.style.padding = "10px 15px";
+  contactOverdueButton.style.background = "#16A34A";
+  contactOverdueButton.style.color = "white";
+  contactOverdueButton.style.border = "none";
+  contactOverdueButton.style.borderRadius = "8px";
+  contactOverdueButton.style.cursor = "pointer";
+
+  contactOverdueButton.onclick = () => {
+    document.getElementById("overdueProspects").scrollIntoView({
+      behavior: "smooth"
+    });
+  };
+
+  overdueAlertBanner.appendChild(contactOverdueButton);
+}
 document.getElementById("totalProspects").textContent =
   allProspects.length;
 
