@@ -805,8 +805,27 @@ console.log(
   behavior: "smooth"
 });
 };
+const whatsappBtn = document.createElement("button");
+whatsappBtn.textContent = "Contacter sur WhatsApp";
 
-item.append(info, viewBtn);
+if (prospect.phone) {
+  whatsappBtn.onclick = () => {
+    let whatsappNumber = prospect.phone.replace(/\D/g, "");
+
+    if (whatsappNumber.startsWith("0")) {
+      whatsappNumber = "213" + whatsappNumber.substring(1);
+    }
+
+    window.open(
+      "https://wa.me/" + whatsappNumber,
+      "_blank"
+    );
+  };
+} else {
+  whatsappBtn.disabled = true;
+  whatsappBtn.textContent = "Aucun téléphone";
+}
+item.append(info, viewBtn, whatsappBtn);
 container.appendChild(item);
   });
 }
