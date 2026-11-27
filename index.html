@@ -173,6 +173,15 @@
   </div>
 
 </div>
+  <div id="prospectChart" style="
+  background: white;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 12px;
+">
+  <h3>Répartition des prospects</h3>
+  <div id="prospectChartBars"></div>
+</div>
   <p>Gérez vos entreprises prospects et vos contacts commerciaux.</p>
 
   <h3>Ajouter un prospect</h3>
@@ -865,6 +874,47 @@ const conversionRate = allProspects.length === 0
 
 document.getElementById("conversionRate").textContent =
   conversionRate.toFixed(1) + " %";
+    const chartContainer = document.getElementById("prospectChartBars");
+chartContainer.textContent = "";
+
+const chartStatuses = [
+  { key: "new", label: "Nouveaux" },
+  { key: "contacted", label: "Contactés" },
+  { key: "interested", label: "Intéressés" },
+  { key: "customer", label: "Clients" },
+  { key: "lost", label: "Perdus" }
+];
+
+chartStatuses.forEach((status) => {
+  const count = allProspects.filter(
+    p => p.status === status.key
+  ).length;
+
+  const percentage = allProspects.length === 0
+    ? 0
+    : (count / allProspects.length) * 100;
+
+  const line = document.createElement("div");
+  line.style.margin = "15px 0";
+
+  const label = document.createElement("p");
+  label.textContent = status.label + " : " + count;
+
+  const barBackground = document.createElement("div");
+  barBackground.style.background = "#E2E8F0";
+  barBackground.style.height = "14px";
+  barBackground.style.borderRadius = "10px";
+
+  const bar = document.createElement("div");
+  bar.style.width = percentage + "%";
+  bar.style.height = "14px";
+  bar.style.background = "#2563EB";
+  bar.style.borderRadius = "10px";
+
+  barBackground.appendChild(bar);
+  line.append(label, barBackground);
+  chartContainer.appendChild(line);
+});
     if (snapshot.empty) {
       prospectsList.textContent = "Aucun prospect enregistré.";
       return;
