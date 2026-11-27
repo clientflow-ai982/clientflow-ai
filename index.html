@@ -785,15 +785,14 @@ info.textContent =
 const viewBtn = document.createElement("button");
 viewBtn.textContent = "Voir le prospect";
 
-viewBtn.onclick = () => {
-  alert("Bouton Voir le prospect activé !");
+viewBtn.onclick = async () => {
   document.getElementById("searchProspects").value =
     prospect.company || "";
-alert("Entreprise recherchée : " + prospect.company);
+
   document.getElementById("filterProspectStatus").value = "all";
 
-  loadProspects();
-alert("Chargement des prospects lancé !");
+  await loadProspects();
+
   document.getElementById("crmSection").scrollIntoView({
     behavior: "smooth"
   });
