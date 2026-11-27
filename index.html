@@ -931,12 +931,35 @@ function displaySmartAlerts(containerId, title, prospects, emptyMessage) {
   const companyName =
     item.prospect.company || "votre entreprise";
 
-  const message =
-    "Bonjour, je me permets de revenir vers vous concernant notre dernier échange. " +
-    "Je souhaitais savoir si vous êtes toujours intéressé(e) par nos services. " +
-    "Je reste à votre disposition pour toute information complémentaire. " +
-    "Bonne journée !\n\n" +
-    "ClientFlow AI";
+  
+let message = "";
+
+if (item.prospect.status === "new") {
+  message =
+    "Je vous contacte pour vous présenter nos services de gestion et d'automatisation de la relation client. " +
+    "Seriez-vous disponible pour échanger quelques minutes ?\n\n" +
+    "Bonne journée !\nClientFlow AI";
+
+} else if (item.prospect.status === "contacted") {
+  message =
+    "Je me permets de revenir vers vous concernant notre précédent échange. " +
+    "Avez-vous eu le temps d'étudier notre proposition ? " +
+    "Je reste à votre disposition pour toute information.\n\n" +
+    "Bonne journée !\nClientFlow AI";
+
+} else if (item.prospect.status === "interested") {
+  message =
+    "Je reviens vers vous concernant votre intérêt pour nos services. " +
+    "Seriez-vous disponible pour une démonstration ou un rendez-vous afin de découvrir notre solution ?\n\n" +
+    "Au plaisir d'échanger avec vous !\nClientFlow AI";
+
+} else {
+  message =
+    "Bonjour, je me permets de reprendre contact avec vous. " +
+    "N'hésitez pas à me contacter si vous souhaitez obtenir davantage d'informations.\n\n" +
+    "Bonne journée !\nClientFlow AI";
+}
+
 
   const whatsappURL =
     "https://wa.me/" +
