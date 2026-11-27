@@ -1463,7 +1463,12 @@ interactionResult.placeholder = "Résultat de l'échange...";
 const nextAction = document.createElement("input");
 nextAction.type = "text";
 nextAction.placeholder = "Prochaine action à effectuer...";
+// Date de la prochaine relance
 
+const nextFollowUpDate = document.createElement("input");
+nextFollowUpDate.type = "date";
+nextFollowUpDate.min = new Date().toISOString().split("T")[0];
+nextFollowUpDate.value = "";
 const saveInteractionBtn = document.createElement("button");
 saveInteractionBtn.textContent = "Enregistrer l'interaction";
 
@@ -1636,6 +1641,7 @@ deleteBtn.addEventListener("click", async () => {
   interactionMethod,
   interactionResult,
   nextAction,
+  nextFollowUpDate,
   saveInteractionBtn,
   interactionHistory
 );
