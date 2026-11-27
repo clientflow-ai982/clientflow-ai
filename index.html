@@ -1701,12 +1701,22 @@ saveInteractionBtn.addEventListener("click", async () => {
 
   try {
     await addDoc(interactionsRef, {
-      date: interactionDate.value,
-      method: interactionMethod.value,
-      result: result,
-      nextAction: nextAction.value.trim(),
-      createdAt: new Date()
-    });
+  date: interactionDate.value,
+  method: interactionMethod.value,
+  result: result,
+  nextAction: nextAction.value.trim(),
+  nextFollowUpDate: nextFollowUpDate.value,
+  createdAt: new Date()
+});
+
+if (nextFollowUpDate.value) {
+  await updateDoc(
+    doc(db, "companies", companyId, "prospects", prospectDoc.id),
+    {
+      followUp: nextFollowUpDate.value
+    }
+  );
+}
 
     alert("Interaction enregistrée avec succès !");
 
