@@ -849,11 +849,68 @@ const interestedList = smartAlertResults.filter(item =>
   )
 );
 
-document.getElementById("inactiveProspects").textContent =
-  "Prospects sans interaction depuis 7 jours : " + inactiveList.length;
 
-document.getElementById("interestedWithoutAction").textContent =
-  "Prospects intéressés sans prochaine action : " + interestedList.length;
+function displaySmartAlerts(containerId, title, prospects, emptyMessage) {
+  const container = document.getElementById(containerId);
+  container.textContent = "";
+
+  const heading = document.createElement("p");
+  heading.textContent = title + " : " + prospects.length;
+  container.appendChild(heading);
+
+  if (prospects.length === 0) {
+    const message = document.createElement("p");
+    message.textContent = emptyMessage;
+    container.appendChild(message);
+    return;
+  }
+
+  prospects.forEach(item => {
+    const row = document.createElement("div");
+    row.style.margin = "10px 0";
+    row.style.padding = "10px";
+    row.style.background = "white";
+    row.style.borderRadius = "8px";
+
+    const name = document.createElement("span");
+    name.textContent = item.prospect.company || "Prospect sans nom";
+
+    const viewButton = document.createElement("button");
+    viewButton.textContent = "Voir le prospect";
+    viewButton.style.marginLeft = "12px";
+
+    viewButton.onclick = async () => {
+      document.getElementById("searchProspects").value =
+        item.prospect.company || "";
+
+      document.getElementById("filterProspectStatus").value = "all";
+
+      await loadProspects();
+
+      document.getElementById("prospectsList").scrollIntoView({
+        behavior: "smooth"
+      });
+    };
+
+    row.append(name, viewButton);
+    container.appendChild(row);
+  });
+}
+
+displaySmartAlerts(
+  "inactiveProspects",
+  "Prospects sans interaction depuis 7 jours",
+  inactiveList,
+  "Aucun prospect en retard."
+);
+
+displaySmartAlerts(
+  "interestedWithoutAction",
+  "Prospects intéressés sans prochaine action",
+  interestedList,
+  "Aucune opportunité sans prochaine action."
+);
+
 
 // Suggestions commerciales
 
