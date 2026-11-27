@@ -132,6 +132,21 @@
     Chargement des prochaines relances...
   </div>
 </section>
+  <section id="smartAlertsSection" style="margin:30px 0;">
+  <h3>🧠 Alertes commerciales intelligentes</h3>
+
+  <div id="inactiveProspects">
+    Chargement des prospects sans interaction...
+  </div>
+
+  <div id="interestedWithoutAction">
+    Chargement des opportunités...
+  </div>
+
+  <div id="commercialSuggestions">
+    Chargement des suggestions...
+  </div>
+</section>
   <div id="prospectStats" style="
   display: flex;
   flex-wrap: wrap;
@@ -749,6 +764,54 @@ async function loadProspects() {
   try {
     const snapshot = await getDocs(prospectsRef);
 const allProspects = snapshot.docs.map(doc => doc.data());
+    // Alertes commerciales intelligentes
+
+const inactiveList = allProspects.filter(prospect => {
+  if (!prospect.lastInteractionDate) return true;
+
+  const lastDate = new Date(prospect.lastInteractionDate);
+  const daysSince = (new Date() - lastDate) / (1000 * 60 * 60 * 24);
+
+  return daysSince >= 7;
+});
+
+const interestedList = allProspects.filter(prospect =>
+  prospect.status === "interested" &&
+  (!prospect.nextAction || prospect.nextAction.trim() === "")
+);
+
+document.getElementById("inactiveProspects").textContent =
+  "Prospects sans interaction depuis 7 jours : " + inactiveList.length;
+
+document.getElementById("interestedWithoutAction").textContent =
+  "Prospects intéressés sans prochaine action : " + interestedList.length;
+
+const suggestions = allProspects
+  .filter(prospect => prospect.status !== "customer" && prospect.status !== "lost")
+  .map(prospect => {
+    if (prospect.status === "interested") {
+      return (prospect.company || "Prospect") + " : proposer un rendez-vous ou envoyer un devis.";
+    }
+
+    if (prospect.status === "contacted") {
+      return (prospect.company || "Prospect") + " : effectuer une relance.";
+    }
+
+    return (prospect.company || "Prospect") + " : prendre un premier contact.";
+  });
+
+const suggestionsContainer = document.getElementById("commercialSuggestions");
+suggestionsContainer.textContent = "";
+
+if (suggestions.length === 0) {
+  suggestionsContainer.textContent = "Aucune suggestion pour le moment.";
+} else {
+  suggestions.forEach(suggestion => {
+    const item = document.createElement("p");
+    item.textContent = "💡 " + suggestion;
+    suggestionsContainer.appendChild(item);
+  });
+}
     const kanbanBoard = document.getElementById("kanbanBoard");
 kanbanBoard.textContent = "";
 
