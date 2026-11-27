@@ -792,7 +792,15 @@ viewBtn.onclick = async () => {
   document.getElementById("filterProspectStatus").value = "all";
 
   await loadProspects();
-
+console.log("Entreprise recherchée :", prospect.company);
+console.log(
+  "Valeur du champ recherche :",
+  document.getElementById("searchProspects").value
+);
+console.log(
+  "Nombre de résultats :",
+  document.getElementById("prospectsList").children.length
+);
   document.getElementById("crmSection").scrollIntoView({
     behavior: "smooth"
   });
