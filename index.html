@@ -821,9 +821,10 @@ const smartAlertResults = await Promise.all(
     const latestInteraction = datedInteractions[0] || null;
 
     return {
-      prospect,
-      latestInteraction
-    };
+  id: prospectDoc.id,
+  prospect,
+  latestInteraction
+};
   })
 );
 
