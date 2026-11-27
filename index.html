@@ -851,6 +851,52 @@ statusSelect.onchange = async () => {
   followUpInfo,
   statusSelect
 );
+  const historyBtn = document.createElement("button");
+historyBtn.textContent = "Voir l'historique";
+
+const historyContainer = document.createElement("div");
+historyContainer.style.marginTop = "10px";
+
+historyBtn.onclick = async () => {
+  historyContainer.textContent = "Chargement de l'historique...";
+
+  try {
+    const interactionsRef = collection(
+      db,
+      "companies",
+      companyId,
+      "prospects",
+      prospectDoc.id,
+      "interactions"
+    );
+
+    const historySnapshot = await getDocs(interactionsRef);
+
+    historyContainer.textContent = "";
+
+    if (historySnapshot.empty) {
+      historyContainer.textContent = "Aucune interaction enregistrée.";
+    } else {
+      historySnapshot.forEach((interactionDoc) => {
+        const interaction = interactionDoc.data();
+
+        const entry = document.createElement("p");
+        entry.textContent =
+          "Date : " + (interaction.date || "Non renseignée") +
+          " | Moyen : " + (interaction.method || "Non renseigné") +
+          " | Résultat : " + (interaction.result || "Aucun") +
+          " | Prochaine action : " + (interaction.nextAction || "Aucune");
+
+        historyContainer.appendChild(entry);
+      });
+    }
+  } catch (error) {
+    historyContainer.textContent =
+      "Erreur : " + error.message;
+  }
+};
+
+prospectCard.append(historyBtn, historyContainer);
   column.appendChild(prospectCard);
 });
   kanbanBoard.appendChild(column);
