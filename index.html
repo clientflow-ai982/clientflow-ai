@@ -749,6 +749,41 @@ async function loadProspects() {
   try {
     const snapshot = await getDocs(prospectsRef);
 const allProspects = snapshot.docs.map(doc => doc.data());
+    const kanbanBoard = document.getElementById("kanbanBoard");
+kanbanBoard.textContent = "";
+
+const kanbanStatuses = [
+  { key: "new", label: "Nouveaux" },
+  { key: "contacted", label: "Contactés" },
+  { key: "interested", label: "Intéressés" },
+  { key: "customer", label: "Clients" },
+  { key: "lost", label: "Perdus" }
+];
+
+kanbanStatuses.forEach((status) => {
+  const column = document.createElement("div");
+
+  column.style.background = "#F1F5F9";
+  column.style.padding = "15px";
+  column.style.borderRadius = "12px";
+  column.style.minWidth = "220px";
+  column.style.flex = "1";
+
+  const heading = document.createElement("h4");
+  heading.textContent = status.label;
+
+  column.appendChild(heading);
+
+  const statusProspects = allProspects.filter(
+    prospect => prospect.status === status.key
+  );
+
+  const count = document.createElement("p");
+  count.textContent = statusProspects.length + " prospect(s)";
+  column.appendChild(count);
+
+  kanbanBoard.appendChild(column);
+});
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
