@@ -774,7 +774,10 @@ async function loadProspects() {
 
   try {
     const snapshot = await getDocs(prospectsRef);
-const allProspects = snapshot.docs.map(doc => doc.data());
+const allProspects = snapshot.docs.map(doc => ({
+  id: doc.id,
+  ...doc.data()
+}));
     
 // Alertes commerciales intelligentes — basées sur l'historique Firestore
 
@@ -1293,7 +1296,32 @@ if (prospect.phone) {
   whatsappBtn.disabled = true;
   whatsappBtn.textContent = "Aucun téléphone";
 }
-item.append(info, viewBtn, whatsappBtn);
+    const completeBtn = document.createElement("button");
+completeBtn.textContent = "Terminer la relance";
+
+completeBtn.onclick = async () => {
+  const confirmed = confirm(
+    "Confirmer que cette relance a été effectuée ?"
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await updateDoc(
+      doc(db, "companies", companyId, "prospects", prospect.id),
+      {
+        followUp: ""
+      }
+    );
+
+    alert("Relance terminée avec succès !");
+    await loadProspects();
+
+  } catch (error) {
+    alert("Erreur : " + error.message);
+  }
+};
+item.append(info, viewBtn, whatsappBtn, completeBtn);
 container.appendChild(item);
   });
 }
