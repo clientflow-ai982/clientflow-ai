@@ -1225,6 +1225,20 @@ container.appendChild(item);
 displayFollowUps("overdueProspects", "Relances en retard", overdue);
 displayFollowUps("todayProspects", "Relances aujourd'hui", dueToday);
 displayFollowUps("upcomingProspects", "Prochaines relances", upcoming);
+    // Mise à jour de la bannière des relances en retard
+
+const overdueAlertBanner = document.getElementById("overdueAlertBanner");
+
+if (overdue.length > 0) {
+  overdueAlertBanner.style.display = "block";
+
+  overdueAlertBanner.textContent =
+    "⚠️ Attention ! Vous avez " +
+    overdue.length +
+    " relance(s) commerciale(s) en retard. Consultez vos rappels.";
+} else {
+  overdueAlertBanner.style.display = "none";
+}
 document.getElementById("totalProspects").textContent =
   allProspects.length;
 
